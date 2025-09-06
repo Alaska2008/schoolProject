@@ -1,6 +1,6 @@
 // TEMPORARY DATA
 
-export let role = "admin";
+// export let role = "admin";
 
 export const teachersData = [
   {
@@ -921,56 +921,62 @@ export const calendarEvents = [
   {
     title: "Math",
     allDay: false,
-    start: new Date(2024, 7, 12, 8, 0),
-    end: new Date(2024, 7, 12, 8, 45),
+    start: new Date(2025, 7, 13, 8, 0),
+    end: new Date(2025, 7, 13, 8, 45),
   },
   {
     title: "English",
     allDay: false,
-    start: new Date(2024, 7, 12, 9, 0),
-    end: new Date(2024, 7, 12, 9, 45),
+    start: new Date(2025, 7, 10, 9, 0),
+    end: new Date(2025, 7, 10, 9, 45),
   },
   {
     title: "Biology",
     allDay: false,
-    start: new Date(2024, 7, 12, 10, 0),
-    end: new Date(2024, 7, 12, 10, 45),
+    start: new Date(2025, 7, 9, 9, 0),
+    end: new Date(2025, 7, 9, 9, 45),
   },
   {
     title: "Physics",
     allDay: false,
-    start: new Date(2024, 7, 12, 11, 0),
-    end: new Date(2024, 7, 12, 11, 45),
+    start: new Date(2025, 7, 15, 12, 0),
+    end: new Date(2025, 7, 15, 12, 45),
   },
   {
     title: "Chemistry",
     allDay: false,
-    start: new Date(2024, 7, 12, 13, 0),
-    end: new Date(2024, 7, 12, 13, 45),
+    start: new Date(2025, 7, 14, 11, 0),
+    end: new Date(2025, 7, 14, 12, 30),
   },
   {
     title: "History",
     allDay: false,
-    start: new Date(2024, 7, 12, 14, 0),
-    end: new Date(2024, 7, 12, 14, 45),
+    start: new Date(2025, 7, 14, 15, 0),
+    end: new Date(2025, 7, 14, 16, 0),
   },
   {
     title: "English",
     allDay: false,
-    start: new Date(2024, 7, 13, 9, 0),
-    end: new Date(2024, 7, 13, 9, 45),
+    start: new Date(2025, 7, 14, 8, 0),
+    end: new Date(2025, 7, 14, 8, 45),
   },
   {
     title: "Biology",
     allDay: false,
-    start: new Date(2024, 7, 13, 10, 0),
-    end: new Date(2024, 7, 13, 10, 45),
+    start: new Date(2025, 7, 14, 9, 0),
+    end: new Date(2025, 7, 14, 9, 45),
+  },
+  {
+    title: "English",
+    allDay: false,
+    start: new Date(2025, 7, 14, 13, 0),
+    end: new Date(2025, 7, 14, 14, 45),
   },
   {
     title: "Physics",
     allDay: false,
-    start: new Date(2024, 7, 13, 11, 0),
-    end: new Date(2024, 7, 13, 11, 45),
+    start: new Date(2025, 7, 10, 14, 0),
+    end: new Date(2025, 7, 11, 14, 45),
   },
 
   {
