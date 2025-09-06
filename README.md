@@ -1,4 +1,4 @@
-# chool Management Dashboard
+# School Management Dashboard
 
 ## Getting Started
 
