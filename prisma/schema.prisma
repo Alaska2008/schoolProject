@@ -116,7 +116,6 @@ model Exam {
   title String
   startTime DateTime
   endTime DateTime
-  
   lessonId Int
   lesson Lesson @relation(fields: [lessonId], references: [id])
   results Result[]
@@ -135,7 +134,6 @@ model Assignment {
 model Result {
   id Int @id @default(autoincrement())
   score Int
-
   examId Int?
   exam Exam? @relation(fields: [examId], references: [id])
   assignmentId Int?

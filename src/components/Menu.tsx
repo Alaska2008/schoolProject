@@ -256,7 +256,7 @@ const Menu = async () =>{
             })}
           </div>
         ))}
-    </div>
+    </div> 
   )
 }
 

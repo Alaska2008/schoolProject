@@ -4,15 +4,17 @@ import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { currentUserId, role } from "@/lib/utils";
+import { auth } from "@clerk/nextjs/server";
+// import { currentUserId, role } from "@/lib/utils";
 // import {  getUserInfo } from "@/lib/utils";
 import { Class, Event, Prisma } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 
 type EventList = Event & { class: Class};
-// const { currentUserId, role } = await getUserInfo();
-const columns =[
+const { userId, sessionClaims} = auth();
+const currentUserId = userId;
+const role = (sessionClaims?.metadata as {role?: string})?.role;const columns =[
     {
         header: "Title", 
         accessor: "title"
@@ -44,7 +46,7 @@ const columns =[
 ];
 
 const renderRow =(item: EventList)=>(
-    <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight">
+    <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-xs hover:bg-lamaPurpleLight">
         <td className="flex items-center gap-3 p-2"> {item.title} </td>
         <td >{item.class?.name || "-"}</td>
         <td className="hidden md:table-cell" >
@@ -66,12 +68,12 @@ const renderRow =(item: EventList)=>(
         </td>
         <td>
             <div className="flex items-center gap-2">
-                {role === "admin" || (role==="teacher" && (
+                {role === "admin"  && (
                      <>
                         <FormModal table="assignment" type="update" data={item}/>
                         <FormModal table="assignment" type="delete" id={item.id}/>
                     </>
-                ) )}
+                   )}
             </div>
         </td>
     </tr>

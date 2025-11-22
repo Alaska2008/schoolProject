@@ -1,10 +1,12 @@
+import FormContainer from "@/components/FormContainer";
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { role,  currentUserId} from "@/lib/utils";
+// import { role,  currentUserId} from "@/lib/utils";
+import { auth } from "@clerk/nextjs/server";
 import { Class, Exam, Prisma, Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
 
@@ -12,11 +14,16 @@ type ExamList = Exam & {lesson: {
     subject: Subject,
     class: Class,
     teacher: Teacher
-}}
+}};
+
+const { userId, sessionClaims} = auth();
+const currentUserId = userId;
+const role = (sessionClaims?.metadata as {role?: string})?.role;
+
 const columns =[
     {
         header: "Subject Name", 
-        accessor: "name"
+        accessor: "subject"
     },
     {
         header: "Class",
@@ -29,7 +36,7 @@ const columns =[
     },
     {
         header: "Date",
-        accessor: "date",
+        accessor: "startTime",
         className: "hidden md:table-cell",
     },
     ...(role === "admin" || role === "teacher" ? [
@@ -40,7 +47,7 @@ const columns =[
     ]:[]),
 ]
 const renderRow =(item: ExamList)=>(
-    <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight">
+    <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-xs hover:bg-lamaPurpleLight">
         <td className="flex items-center gap-3 p-2"> {item.lesson.subject.name} </td>
         <td className="hidden md:table-cell">{item.lesson.class.name}</td>
         <td className="hidden md:table-cell">{item.lesson.teacher.name + " " + item.lesson.teacher.surname}</td>
@@ -52,8 +59,8 @@ const renderRow =(item: ExamList)=>(
            <div className="flex items-center gap-2">
                 {role === "admin" || (role==="teacher" && (
                      <>
-                        <FormModal table="assignment" type="update" data={item}/>
-                        <FormModal table="assignment" type="delete" id={item.id}/>
+                        <FormContainer table="exam" type="update" data={item}/>
+                        <FormContainer table="exam" type="delete" id={item.id}/>
                     </>
                 ) )}
             </div>
@@ -64,7 +71,7 @@ const ExamListPage = async ({
     searchParams
 }:{
     searchParams: {[key: string]: string} | undefined;
-}) =>{
+}) =>{   
     const pageStr = searchParams?.page;
     const p = pageStr ? parseInt(pageStr) : 1;
 
@@ -105,8 +112,7 @@ const ExamListPage = async ({
             break;
         case "student":
             query.lesson.class ={
-                students: {
-                    some: {id: currentUserId!,}
+                students: { some: {id: currentUserId!,}
                 }
             };
             break;
@@ -121,7 +127,8 @@ const ExamListPage = async ({
             break;
         default:
             break;
-    }
+    };
+
     const [data, count] = await prisma.$transaction([
         prisma.exam.findMany({
             where: query,
@@ -154,7 +161,7 @@ const ExamListPage = async ({
                             <Image src='/sort.png' width={14} height={14} alt=""/>
                         </button>
                         {(role ==='admin' || role === "teacher") && ( 
-                            <FormModal table="exam" type="create" />
+                            <FormContainer table="exam" type="create" />
                         )}
                         
                     </div>

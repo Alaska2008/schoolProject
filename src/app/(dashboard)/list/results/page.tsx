@@ -1,10 +1,12 @@
+import FormContainer from "@/components/FormContainer";
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { currentUserId, role } from "@/lib/utils";
+import { auth } from "@clerk/nextjs/server";
+// import { currentUserId, role } from "@/lib/utils";
 // import { getUserInfo } from "@/lib/utils";
 import { Prisma} from "@prisma/client";
 import Image from "next/image";
@@ -21,7 +23,9 @@ type ResultList =  {
     className: string;
     startTime: Date;
 };
-// const { currentUserId, role } = await getUserInfo();
+const { userId, sessionClaims} = auth();
+const currentUserId = userId;
+const role = (sessionClaims?.metadata as {role?: string})?.role;
 const columns =[
     {
         header: "Title", 
@@ -61,24 +65,23 @@ const columns =[
 ];
 
 const renderRow =(item: ResultList)=>(
-    <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight">
+    <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-xs hover:bg-lamaPurpleLight">
         <td className="flex items-center gap-3 p-2"> {item.title} </td>
         <td >{item.studentName + " " + item.studentSurname}</td>
         <td className="hidden md:table-cell" >{item.score}</td>
         <td className="hidden md:table-cell">{item.teacherName +" "+ item.teacherSurname}</td>
         <td className="hidden md:table-cell">{item.className}</td>
         <td className="hidden md:table-cell">
-            {}
             {new Intl.DateTimeFormat("en-US").format(item.startTime)}
         </td>
         <td>
             <div className="flex items-center gap-2">
-                {(role === "admin" || (role==="teacher") && (
+                {(role === "admin" || role==="teacher") && (
                      <>
-                        <FormModal table="result" type="update" data={item}/>
-                        <FormModal table="result" type="delete" id={item.id}/>
+                        <FormContainer table="result" type="update" data={item}/>
+                        <FormContainer table="result" type="delete" id={item.id}/>
                     </>
-                 ) )}
+                 )}
             </div>
         </td>
     </tr>
@@ -200,7 +203,7 @@ const ResultListPage = async ({
                             <Image src='/sort.png' width={14} height={14} alt=""/>
                         </button>
                         {(role ==='admin' || role === "teacher" ) && (
-                            <FormModal table="result" type="create"  />
+                            <FormContainer table="result" type="create"  />
                         )}
                         
                     </div>

@@ -41,8 +41,8 @@ const Pagination =({page, count}:{page:number, count:number}) =>{
                 onClick={()=>{changePage(page + 1)}}
                 disabled ={!hasNext}
             >
-                Nex
-            t</button>
+                Next
+            </button>
 
         </div>
     )

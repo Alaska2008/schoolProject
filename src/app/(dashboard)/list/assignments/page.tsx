@@ -4,11 +4,14 @@ import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { currentUserId, role } from "@/lib/utils";
+// import { currentUserId, role } from "@/lib/utils";
+import { auth } from "@clerk/nextjs/server";
 import { Assignment, Class, Prisma, Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
 
-
+const { userId, sessionClaims} = auth();
+const currentUserId = userId;
+const role = (sessionClaims?.metadata as {role?: string})?.role;
 
 type AssignmentList =  Assignment & {lesson: {
     subject: Subject,
@@ -47,7 +50,6 @@ const renderRow =(item: AssignmentList)=>(
         <td className="hidden md:table-cell">{item.lesson.class.name}</td>
         <td className="hidden md:table-cell">{item.lesson.teacher.name + " " + item.lesson.teacher.surname}</td>
         <td className="hidden md:table-cell">
-            {" "}
             {new Intl.DateTimeFormat("en-US").format(item.dueDate)}
         </td>
         <td>

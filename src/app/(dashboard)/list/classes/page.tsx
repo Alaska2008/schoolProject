@@ -1,17 +1,18 @@
-import FormModal from "@/components/FormModal";
+import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { role } from "@/lib/utils";
-// import { getUserInfo } from "@/lib/utils";
+import { auth } from "@clerk/nextjs/server";
 import { Class, Prisma, Teacher } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 
 type ClassList = Class & {supervisor: Teacher};
-// const { currentUserId, role } = await getUserInfo();
+const { userId, sessionClaims} = auth();
+const currentUserId = userId;
+const role = (sessionClaims?.metadata as {role?: string})?.role;
 const columns =[
     {
         header: "Class Name", 
@@ -38,7 +39,7 @@ const columns =[
     }] : []),
 ]
 const renderRow =(item: ClassList)=>(
-    <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight">
+    <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-xs hover:bg-lamaPurpleLight">
         <td className="flex items-center gap-3 p-2"> {item.name} </td>
         <td className="hidden md:table-cell">{item.capacity}</td>
         <td className="hidden md:table-cell">{item.name[0]}</td>
@@ -47,8 +48,8 @@ const renderRow =(item: ClassList)=>(
             <div className="flex items-center gap-2">
                 {role === "admin" && (
                     <>
-                        <FormModal table="class" type="update" data={item}/>
-                        <FormModal table="class" type="delete" id={item.id}/>
+                        <FormContainer table="class" type="update" data={item}/>
+                        <FormContainer table="class" type="delete" id={item.id}/>
                     </>
                 )}
             </div>
@@ -110,7 +111,7 @@ const ClassListPage = async ({
                             <Image src='/sort.png' width={14} height={14} alt=""/>
                         </button>
                         {role ==='admin' && ( 
-                            <FormModal table="class" type="create"/>
+                            <FormContainer table="class" type="create"/>
                         )}
                         
                     </div>

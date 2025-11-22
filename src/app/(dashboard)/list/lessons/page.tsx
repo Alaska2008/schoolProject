@@ -4,10 +4,15 @@ import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { role } from "@/lib/utils";
+import { auth } from "@clerk/nextjs/server";
+// import { role } from "@/lib/utils";
 import { Class, Lesson, Prisma, Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
 
+
+const { userId, sessionClaims} = auth();
+const currentUserId = userId;
+const role = (sessionClaims?.metadata as {role?: string})?.role;
 type LessonList = Lesson & { subject: Subject } & {class: Class} & { teacher: Teacher };
 const columns =[
     {
@@ -23,7 +28,7 @@ const columns =[
         accessor: "teacher",
         className: "hidden md:table-cell",
     },
-    ...(role === "teacher" || role === "admin" ? [
+    ...(role === "admin" ? [
         {
             header: "Actions",
             accessor: "action"
@@ -31,7 +36,7 @@ const columns =[
     ]:[])
 ]
 const renderRow =(item: LessonList)=>(
-    <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight">
+    <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-xs hover:bg-lamaPurpleLight">
         <td className="flex items-center gap-3 p-2"> {item.subject.name} </td>
         <td className="hidden md:table-cell">{item.class.name}</td>
         <td className="hidden md:table-cell">{item.teacher.name + " " + item.teacher.surname}</td>
@@ -83,7 +88,31 @@ const LessonListPage = async ({
             }
         }
     }
-
+    // switch (role) {
+    //         case "admin":
+    //             break;
+    //         case "teacher":
+    //             query.lesson.teacherId = currentUserId!;
+    //             break;
+    //         case "student":
+    //             query.lesson.class ={
+    //                 students: {
+    //                     some: {id: currentUserId!,}
+    //                 }
+    //             };
+    //             break;
+    //         case "parent":
+    //             query.lesson.class ={
+    //                 students: {
+    //                     some: {
+    //                         parentId: currentUserId!,
+    //                     }
+    //                 }
+    //             };
+    //             break;
+    //         default:
+    //             break;
+    //     }
     const [data, count] = await prisma.$transaction([
         prisma.lesson.findMany({
             where: query,

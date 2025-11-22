@@ -1,17 +1,20 @@
+import FormContainer from "@/components/FormContainer";
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { role } from "@/lib/utils";
-// import { getUserInfo } from "@/lib/utils";
+// import { role } from "@/lib/utils";
+import { auth } from "@clerk/nextjs/server";
 import { Class, Prisma, Student } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 
+
 type StudentList = Student & {class: Class} 
-// const { currentUserId, role } = await getUserInfo();
+const {userId, sessionClaims} = auth();
+const role = (sessionClaims?.metadata as {role: string}).role;
 const columns =[
     {
         header: "Info", accessor: "info"
@@ -71,7 +74,7 @@ const renderRow =(item: StudentList)=>(
                     </button>
                 </Link>
                 {role === "admin" && (
-                    <FormModal table="student" type="delete" id={item.id}/>
+                    <FormContainer table="student" type="delete" id={item.id}/>
                 )}
             </div>
         </td>
@@ -127,7 +130,6 @@ const StudentListPage = async ({
         }),
         prisma.student.count({where: query}),
     ]);
-    // console.log("Teachers: ", data);
 
     return (
         <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
@@ -143,7 +145,7 @@ const StudentListPage = async ({
                             <Image src='/sort.png' width={14} height={14} alt=""/>
                         </button>
                         {role ==='admin' && (
-                            <FormModal table="student" type="create" />
+                            <FormContainer table="student" type="create" />
                         )}
                         
                     </div>

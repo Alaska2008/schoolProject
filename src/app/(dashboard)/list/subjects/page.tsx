@@ -1,17 +1,20 @@
+import FormContainer from "@/components/FormContainer";
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { role } from "@/lib/utils";
-// import { getUserInfo } from "@/lib/utils";
+// import { role } from "@/lib/utils";
+import { auth } from "@clerk/nextjs/server";
 import { Prisma, Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
-import Link from "next/link";
 
+
+const { userId, sessionClaims} = auth();
+const currentUserId = userId;
+const role = (sessionClaims?.metadata as {role?: string})?.role;
 type SubjectList = Subject & {teachers: Teacher[]}
-// const { currentUserId, role } = await getUserInfo();
 const columns =[
     {
         header: "Subject Names", 
@@ -30,16 +33,16 @@ const columns =[
 
 
 const renderRow =(item: SubjectList)=>(
-    <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight">
+    <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-xs hover:bg-lamaPurpleLight">
         <td className="flex items-center gap-3 p-2"> {item.name} </td>
         <td className="hidden md:table-cell">{item.teachers.map(teacher=>teacher.name).join(",")}</td>
         <td>
             <div className="flex items-center gap-2">
-                <Link href={`/list/teachers/${item.id}`}>
-                    <FormModal table="subject" type="update" data={item}/>
-                </Link>
                 {role === "admin" && (
-                    <FormModal table="subject" type="delete" id={item.id}/>
+                    <>
+                        <FormContainer table="subject" type="update" data={item}/>
+                        <FormContainer table="subject" type="delete" id={item.id}/>
+                    </>
                 )}
             </div>
         </td>
@@ -98,13 +101,7 @@ const SubjectListPage  = async ({
                         <button className="w-8 h-8 items-center justify-items-center rounded-full bg-lamaYellow">
                             <Image src='/sort.png' width={14} height={14} alt=""/>
                         </button>
-                        {role ==='admin' && (
-                            // <button className="w-8 h-8 items-center justify-items-center rounded-full bg-lamaYellow">
-                            //     <Image src='/plus.png' width={14} height={14} alt=""/>
-                            // </button>
-                            <FormModal table="subject" type="create" />
-                        )}
-                        
+                        {role ==='admin' && (<FormContainer table="subject" type="create" /> )}
                     </div>
                 </div>
             </div>
