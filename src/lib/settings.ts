@@ -4,18 +4,19 @@ type RouteAccessMap = {
 };
 
 export const routeAccessMap: RouteAccessMap ={
-    "/admin(.*)": ["admin"],
-    "/student(.*)": ["student"],
-    "/teacher(.*)": ["teacher"],
-    "/parent(.*)": ["parent"],
-    "/list/teachers": ["admin", "teacher"],
-    "/list/students": [ "teacher","admin"],
-    "/list/parents": [ "teacher","admin"],
-    "/list/subjects": ["admin"],
-    "/list/classes": [ "teacher","admin"],
-    "/list/exams": [ "teacher","admin", "parent", "student"],
-    "/list/assignments": [ "teacher","admin", "parent", "student"],
-    "/list/attendances": [ "teacher","admin", "parent", "student"],
-    "/list/events": [ "teacher","admin", "parent", "student"],
-    "/list/announcements": [ "teacher","admin", "parent", "student"],
+    "/admin(.*)": ["admin", "superAdmin"],
+    "/student(.*)": ["student", "superAdmin"],
+    "/teacher(.*)": ["teacher", "superAdmin"],
+    "/parent(.*)": ["parent", "superAdmin"],
+    "/list/teachers": ["admin", "teacher", "superAdmin"],
+    "/list/students": [ "teacher","admin", "superAdmin"],
+    "/list/parents": [ "teacher","admin", "superAdmin"],
+    "/list/subjects": ["admin", "superAdmin"],
+    "/list/classes": [ "teacher","admin", "superAdmin"],
+    "/list/exams": [ "teacher","admin", "parent", "student", "superAdmin"],
+    "/list/assignments": [ "teacher","admin", "parent", "student", "superAdmin"],
+    "/list/attendances": [ "teacher","admin", "parent", "student", "superAdmin"],
+    "/list/events": [ "teacher","admin", "parent", "student", "superAdmin"],
+    "/list/announcements": [ "teacher","admin", "parent", "student", "superAdmin"],
 };
+

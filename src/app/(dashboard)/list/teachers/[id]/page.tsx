@@ -1,11 +1,9 @@
 import Announcement from "@/components/Announcement";
-import BigCalendar from "@/components/BigCalendar";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import FormContainer from "@/components/FormContainer";
 import Performance from "@/components/Performance";
+import { currentUser } from "@/lib/currentUser";
 import prisma from "@/lib/prisma";
-// import { role } from "@/lib/utils";
-import { auth } from "@clerk/nextjs/server";
 import { Teacher } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,8 +11,8 @@ import { notFound } from "next/navigation";
 
 const SingleTeacherPage = async({params: {id}}:{params: {id: string}})=>{
     
-    const { sessionClaims} = auth();
-    const role = (sessionClaims?.metadata as {role?: string})?.role;
+    const user = await currentUser();
+    const role = user?.role;
     
     const teacher: (Teacher & {
         _count: {subjects:number; lessons:number; classes:number}

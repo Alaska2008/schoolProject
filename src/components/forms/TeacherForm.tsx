@@ -10,7 +10,6 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { CldUploadWidget } from "next-cloudinary";
-import { Result } from "postcss";
 
 
 const TeacherForm = ({
@@ -39,8 +38,11 @@ const TeacherForm = ({
     const onSubmit =handleSubmit((data)=>{
         formAction({...data, img: img?.secure_url });        
     });
+    const { subjects } = relatedData ?? {};
+
     const router = useRouter();
     useEffect(() =>{
+        console.log("Subjects: ", subjects)
         if(state.success){
             toast(`Teacher has been ${type==="create" ? "create" : "update"}!`);
             setOpen(false);
@@ -48,7 +50,7 @@ const TeacherForm = ({
         }
     }, [state, router, type, setOpen]);
 
-    const { subjects } = relatedData ?? {};
+    
 
     return (
         <form className=" flex flex-col gap-8" onSubmit={onSubmit}>
@@ -115,18 +117,14 @@ const TeacherForm = ({
                 <InputField 
                     label="Birthdate" 
                     name= "birthdate"
-                    defaultvalue={data?.birthdate?.toISOString().split("T")[0]} 
+                    // defaultvalue= {normalizeDate2(data?.birthday)}
+                    defaultvalue={data?.birthday?.toISOString().split("T")[0]}
+                    //new Date(datetime).toISOString().split("T")[0]; 
                     register={register} 
                     error={errors?.birthdate}
                     type="date"
                 />
-                <InputField 
-                    label="Bloodtype" 
-                    name= "bloodType"
-                    defaultvalue={data?.bloodType} 
-                    register={register} 
-                    error={errors?.bloodType}
-                />
+               
                 {data && (
                     <InputField 
                         label="Id" 

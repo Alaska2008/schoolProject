@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 // import { Inter } from "next/font/google";
 import { DM_Sans, Inter } from "next/font/google";
 import "./globals.css";
-import { ClerkProvider  } from "@clerk/nextjs";
+// import { ClerkProvider  } from "@clerk/nextjs";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-
+import { AuthProvider } from "@/context/AuthContext";
 const inter = Inter({ subsets: ["latin"] });
 // const dmSans = DM_Sans({
 //   subsets: ["latin"],
@@ -22,15 +22,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        {/* <body className={`${dmSans.className}`}> */}
-        <body className={inter.className}>
+    
+    <html lang="en">
+      {/* <body className={`${dmSans.className}`}> */}
+      <body className={inter.className}>
+        <AuthProvider>
           {children}
           <ToastContainer position="bottom-right" theme="dark"/>
-        </body>
-      </html>
-    </ClerkProvider>
+        </AuthProvider>
+      </body>
+    </html>
+    
     
   );
 }

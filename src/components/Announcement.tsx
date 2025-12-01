@@ -1,24 +1,24 @@
+
+import { currentUser } from "@/lib/currentUser";
 import prisma from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
 
 const Announcement = async() => {
-    const { userId, sessionClaims } = auth();
-    const role = (sessionClaims?.metadata as { role? : string})?.role;
+   const user = await currentUser();
 
     const roleConditions = {
-        // admin: {},
-        teacher: { lessons: {some: {teacherId: userId!}}},
-        student: { students: {some: {id: userId!}}},
-        parent: { students: {some: {parentId: userId!}}},
+        admin: {},
+        teacher: { lessons: {some: {teacherId: user?.userId!}}},
+        student: { students: {some: {id: user?.userId!}}},
+        parent: { students: {some: {parentId: user?.userId!}}},
     };
 
     const data = await prisma.announcement.findMany({
         take: 3,
         orderBy: {date: "desc"},
         where:{
-            ...(role !== "admin" && {
+            ...(user?.role !== "admin" && {
                 OR: [{ classId: null }, 
-                    { class: roleConditions[role as keyof typeof roleConditions || {}] 
+                    { class: roleConditions[user?.role as keyof typeof roleConditions || {}] 
                 }],
             }),
         },

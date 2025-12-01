@@ -1,6 +1,6 @@
 "use client"
 
-import { deleteClass, deleteStudent, deleteSubject, deleteTeacher } from "@/lib/actions";
+import { deleteAssignment, deleteClass, deleteExam, deleteParent, deleteStudent, deleteSubject, deleteTeacher } from "@/lib/actions";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -15,10 +15,10 @@ const deleteActionmap ={
     class: deleteClass,
     teacher: deleteTeacher,
     student: deleteStudent,
-    parent: deleteSubject,
+    parent: deleteParent,
     lesson: deleteSubject,
-    exam: deleteSubject,
-    assignment: deleteSubject,
+    exam: deleteExam,
+    assignment: deleteAssignment,
     result: deleteSubject,
     attendance: deleteSubject,
     event: deleteSubject,
@@ -31,20 +31,23 @@ const TeacherForm = dynamic(() => import("./forms/TeacherForm"),{
 const StudentForm = dynamic(() => import("./forms/StudentForm"),{
     loading: ()=> <h1>Loading ...</h1>,
 });
-// const ParentForm = dynamic(() => import("./forms/ParentForm"),{
-//     loading: ()=> <h1>Loading ...</h1>,
-// });
+
 const ClassForm = dynamic(() => import("./forms/ClassForm"),{
     loading: ()=> <h1>Loading ...</h1>,
 });
 const SubjectForm = dynamic(() => import("./forms/SubjectForm"),{
     loading: ()=> <h1>Loading ...</h1>,
 });
-const ExamForm = dynamic(() => import("./forms/SubjectForm"),{
+const ExamForm = dynamic(() => import("./forms/ExamForm"),{
+    loading: ()=> <h1>Loading ...</h1>,
+});
+const AssignmentForm = dynamic(() => import("./forms/AssignmentForm"),{
+    loading: ()=> <h1>Loading ...</h1>,
+});
+const ParentForm = dynamic(() => import("./forms/ParentForm"),{
     loading: ()=> <h1>Loading ...</h1>,
 });
 // const LessonForm = dynamic(() => import("./forms/LessonForm")
-// const AssignmentForm = dynamic(() => import("./forms/AssignmentForm"));
 // const ResultForm = dynamic(() => import("./forms/ResultForm"));
 // const AttendanceForm = dynamic(() => import("./forms/AttendanceForm"));
 // const EventForm = dynamic(() => import("./forms/EventForm"));
@@ -58,9 +61,9 @@ const forms: {
     class: (setOpen,type, data, relatedData)=> <ClassForm setOpen={setOpen} type={type} data={data}  relatedData={relatedData}/>,
     subject: (setOpen,type, data, relatedData)=> <SubjectForm setOpen={setOpen} type={type} data={data}  relatedData={relatedData}/>,
     exam: (setOpen,type, data, relatedData)=> <ExamForm setOpen={setOpen} type={type} data={data}  relatedData={relatedData}/>,
-    // parent: (setOpen,type, data, relatedData)=> <ParentForm setOpen={setOpen} type={type} data={data}  relatedData={relatedData}/>,
+    assignment: (setOpen,type, data, relatedData)=> <AssignmentForm setOpen={setOpen} type={type} data={data}  relatedData={relatedData}/>,
+    parent: (setOpen,type, data, relatedData)=> <ParentForm setOpen={setOpen} type={type} data={data}  relatedData={relatedData}/>,
     // lesson: (setOpen,type, data, relatedData)=> <LessonForm setOpen={setOpen} type={type} data={data}  relatedData={relatedData}/>,
-    // assignment: (setOpen,type, data, relatedData)=> <AssignmentForm setOpen={setOpen} type={type} data={data}  relatedData={relatedData}/>,
     // result: (setOpen,type, data, relatedData)=> <ResultForm setOpen={setOpen} type={type} data={data}  relatedData={relatedData}/>,
     // attendance: (setOpen,type, data, relatedData)=> <AttendanceForm setOpen={setOpen} type={type} data={data}  relatedData={relatedData}/>,
     // event: (setOpen,type, data, relatedData)=> <EventForm setOpen={setOpen} type={type} data={data}  relatedData={relatedData}/>,

@@ -11,7 +11,7 @@ export default function DashboardLayout({
   return  <div className='h-screen flex pt-0 mt-0'>
     <div className="w-[14%] md:w-[8%] lg:w-[16%] xl:w-[14%] p-2">
         <Link href='/' className="flex items-center gap:2 justify-center lg:justify-start">
-            <Image src='/logo.png' alt='logo' width={32} height={20}/>
+            <Image src='/logo.png' alt='logo' width={24} height={18}/>
             <span className="hidden lg:block font-bold"> Veritas Int. Sch.</span>
         </Link>
         <Menu />

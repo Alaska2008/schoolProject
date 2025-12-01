@@ -3,6 +3,7 @@ import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
+import { currentUser } from "@/lib/currentUser";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 // import { role,  currentUserId} from "@/lib/utils";
@@ -16,10 +17,9 @@ type ExamList = Exam & {lesson: {
     teacher: Teacher
 }};
 
-const { userId, sessionClaims} = auth();
-const currentUserId = userId;
-const role = (sessionClaims?.metadata as {role?: string})?.role;
-
+const user = await currentUser();
+const role = user?.role;
+const currentUserId = user?.userId;
 const columns =[
     {
         header: "Subject Name", 
@@ -56,14 +56,22 @@ const renderRow =(item: ExamList)=>(
             {new Intl.DateTimeFormat("en-US").format(item.startTime)}
         </td>
         <td>
-           <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
+                {(role === "admin" || role==="teacher") && (
+                    <>
+                        <FormContainer table="exam" type="update" data={item}/>
+                        <FormContainer table="exam" type="delete" id={item.id}/>
+                    </>
+                )}
+            </div>
+           {/* <div className="flex items-center gap-2">
                 {role === "admin" || (role==="teacher" && (
                      <>
                         <FormContainer table="exam" type="update" data={item}/>
                         <FormContainer table="exam" type="delete" id={item.id}/>
                     </>
                 ) )}
-            </div>
+            </div> */}
         </td>
     </tr>
 );

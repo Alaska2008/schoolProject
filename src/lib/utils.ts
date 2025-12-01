@@ -1,7 +1,22 @@
-// import { auth } from "@clerk/nextjs/server";
-// const { userId, sessionClaims } = auth();
-// export const role = (sessionClaims?.metadata as { role?: string })?.role ?? null;
-// export const currentUserId = userId;
+
+export const normalizeDate =(dateStr:string ): string =>{
+    const datetime = dateStr;
+    const dateOnly = new Date(datetime).toISOString().split("T")[0];
+    return dateOnly;
+};
+
+export const normalizeDate2 =(dateStr:string ) =>{
+    const birtdate = new Date(dateStr).toISOString()
+    const birtdate2 = new Date(birtdate)
+
+    const formatter = new Intl.DateTimeFormat("en-US", {
+        month: "2-digit",
+        day: "2-digit",
+     year: "numeric",
+    });
+    const formattedDate = formatter.format( birtdate2);
+    return formattedDate
+};
 
 const currentWorkWeek = ()=>{
     const today = new Date();
@@ -54,4 +69,5 @@ export const adjustScheduleTiCurrentWeek = (
             end: adjustedEndDate,
         };
     });
-}
+};
+

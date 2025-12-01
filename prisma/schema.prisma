@@ -33,8 +33,6 @@ model Student {
   parent Parent @relation(fields: [parentId], references: [id])
   classId Int
   class Class @relation(fields: [classId], references: [id])
-  gradeId Int
-  grade Grade @relation(fields: [gradeId], references: [id])
   attendance Attendance[]
   results Result[]
 }
@@ -66,13 +64,7 @@ model Parent {
   createdAt DateTime @default(now())
   students Student[]
 }
-model Grade {
-  id Int @id @default(autoincrement())
-  level Int @unique
 
-  student Student[]
-  classes Class[]
-}
 
 model Class {
   id Int @id @default(autoincrement())
@@ -82,8 +74,6 @@ model Class {
   supervisor Teacher? @relation(fields: [supervisorId], references: [id])
   lessons Lesson[]
   students Student[]
-  gradeId Int
-  grade Grade @relation(fields: [gradeId], references: [id])
   events Event[]
   announcements Announcement[]
 
@@ -100,7 +90,6 @@ model Lesson {
   day Day
   startTime DateTime
   endTime DateTime
-
   subjectId Int
   subject Subject @relation(fields: [subjectId], references: [id])
   classId Int
@@ -125,7 +114,6 @@ model Assignment {
   title String
   startDate DateTime
   dueDate DateTime
-
   lessonId Int
   lesson Lesson @relation(fields: [lessonId], references: [id])
   results Result[]
@@ -173,6 +161,7 @@ model Announcement {
 enum UserSex{
   MALE
   FEMALE
+  NONE
 }
 enum Day{
   MONDAY
@@ -180,4 +169,82 @@ enum Day{
   WEDNESDAY
   THURSDAY
   FRIDAY
+}
+
+
+
+enum Role {
+  teacher
+  parent
+  admin
+  student
+  superAdmin
+}
+
+model User {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  emailVerifiedAt DateTime?
+  username        String?   @unique
+  passwordHash    String
+  role            Role      @default(student)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  sessions        Session[]
+  verificationTokens VerificationToken[]
+  resetTokens     PasswordResetToken[]
+}
+model School {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  director  String    
+  code      String   @unique
+  img       String?
+  phone     String? @unique
+  address   String
+  email     String? @unique
+}
+
+
+model Session {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
+  refreshToken     String  
+  expiresAt        DateTime 
+  lastUsedAt       DateTime @default(now())
+  userAgent        String?
+  ipAddress        String?
+  revokedAt        DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  @@index([userId])
+}
+
+model VerificationToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  tokenHash String   // store hash, send raw token via email
+  expiresAt DateTime
+  usedAt    DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  tokenHash String
+  expiresAt DateTime
+  usedAt    DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
 }

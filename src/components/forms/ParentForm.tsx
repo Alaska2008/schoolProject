@@ -1,52 +1,60 @@
 "use client"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import InputField from "../InputField";
+import { parentSchema, ParentSchema, teacherSchema, TeacherSchema } from "@/lib/formValidationSchemas";
+import { createParent, createTeacher, updateParent, updateTeacher } from "@/lib/actions";
+import { useFormState } from "react-dom";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
-const schema = z.object({
-    username: z
-        .string()
-        .min(3, {message: "Username must be at least 3 characters long!"})
-        .max(20, {message: "Username must be at most 20 characters long!"}),
-    email: z.string().email({message: "Invalid email address!"}),
-    password: z
-        .string()
-        .min(8, {message: "Password must be at least 8 characters long!"}),
-    firstName: z.string().min(1, {message: "First name is required!"}),
-    lastName: z.string().min(1, {message: "Last name is required!"}),
-    phone: z.string().min(1, {message: "Phone number is required!"}),
-    bloodType: z.string().min(1, {message: "Blood type is required!"}),
-    address: z.string().min(1, {message: "Address is required!"}),
-    birthday: z.string().min(1, {message: "Birthday is required!"}),
-    sex: z.enum(["male", "female"], {message: "Sex is required!"}),
-    img: z.instanceof(File, {message: "First name is required!"}),
+import { CldUploadWidget } from "next-cloudinary";
 
-});
-type Inputs = z.infer<typeof schema>;
+
 
 const ParentForm = ({
+    setOpen,
     type,
     data,
+    relatedData,
 }:{
+    setOpen: Dispatch<SetStateAction<boolean>>;
     type: "create" | "update";
     data?: any;
+    relatedData?: any;
 }) =>{
+    const [img, setImg] = useState<any>()
 
     const {
         register, handleSubmit, formState: { errors },
-    } = useForm<Inputs>({
-        resolver: zodResolver(schema),
+    } = useForm<ParentSchema>({
+        resolver: zodResolver(parentSchema),
+    });
+    //AFTER REACT 19 IT'LL BE USEACTION
+    const [state, formAction] = useFormState(type==="create" ? createParent : updateParent, {
+        success: false,
+        error: false,
     });
     const onSubmit =handleSubmit((data)=>{
-        console.log(data)
+        formAction(data);        
     });
+    const router = useRouter();
+    useEffect(() =>{
+        if(state.success){
+            toast(`Parent has been ${type==="create" ? "create" : "update"}!`);
+            setOpen(false);
+            router.refresh();
+        }
+    }, [state, router, type, setOpen, data]);
+
+    const { students } = relatedData ?? {};
 
     return (
         <form className=" flex flex-col gap-8" onSubmit={onSubmit}>
-            <h1 className="text-xl font-semibold">Create a new student</h1>
-            <span  className="texy-xs text-gray-400 font-semibold">Authentication Information</span>
+            <h1 className="text-xl font-semibold">{type==="create" ? "Create a new Teacher" : "Update the Teacher"}</h1>
             <div className="flex justify-between gap-4 flex-wrap ">
+                {/* <span>Authentication information</span> */}
                 <InputField 
                     label="Username" 
                     name= "username"
@@ -56,7 +64,6 @@ const ParentForm = ({
                 />
                 <InputField 
                     label="Email" 
-                    type="email"
                     name= "email"
                     defaultvalue={data?.email} 
                     register={register} 
@@ -65,30 +72,27 @@ const ParentForm = ({
                 <InputField 
                     label="Password" 
                     name= "password"
-                    type="password"
                     defaultvalue={data?.password} 
                     register={register} 
                     error={errors?.password}
                 />
-            </div>
-            <span className="text-xs text-gray-400 font-medium">Personal Information</span>
-            <div className="flex justify-between gap-4 flex-wrap ">
+                {/* <span>Personal Information</span> */}
                 <InputField 
                     label="First Name" 
-                    name= "firstName"
-                    defaultvalue={data?.firstName} 
+                    name= "name"
+                    defaultvalue={data?.name} 
                     register={register} 
-                    error={errors?.firstName}
+                    error={errors?.name}
                 />
                 <InputField 
                     label="Last Name" 
-                    name= "lastname"
-                    defaultvalue={data?.lastName} 
+                    name= "surname"
+                    defaultvalue={data?.surname} 
                     register={register} 
-                    error={errors?.lastName}
+                    error={errors?.surname}
                 />
                 <InputField 
-                    label="Phone Number" 
+                    label="Phone" 
                     name= "phone"
                     defaultvalue={data?.phone} 
                     register={register} 
@@ -97,53 +101,86 @@ const ParentForm = ({
                 <InputField 
                     label="Address" 
                     name= "address"
-                    defaultvalue={data?.addres} 
+                    defaultvalue={data?.address} 
                     register={register} 
                     error={errors?.address}
                 />
-                <InputField 
-                    label="Blood Type" 
-                    name= "bloodType"
-                    defaultvalue={data?.bloodType} 
-                    register={register} 
-                    error={errors?.bloodType}
-                />
-                <InputField 
-                    label="Birthday" 
-                    name= "birthday"
-                    type="date"
-                    defaultvalue={data?.birthday} 
-                    register={register} 
-                    error={errors?.birthday}
-                />
-            </div>
-            <div className="flex justify-between ">
-                <div className="flex flex-col gap-2 w-full md:w-1/4">
+               
+                {data && (
+                    <InputField 
+                        label="Id" 
+                        name= "id"
+                        defaultvalue={data?.id} 
+                        register={register} 
+                        error={errors?.id}
+                        hidden
+                    />
+                )}
+                
+                {/* <div className="flex flex-col gap-2 w-full md:w-1/4">
                     <label className="text-xs text-gray-500">Sex</label>
                     <select 
                         {...register("sex")} 
                         className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full" 
                         defaultValue={data?.sex}
                     >
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
+                        <option value="MALE">Male</option>
+                        <option value="FEMALE">Female</option>
                     </select>
-                    {errors.sex?.message && 
+                    {errors.sex?.message &&(
                         <p className="text-red-600 text-xs">  {errors.sex?.message.toString()} </p>
-                    }
+                    )}
+                </div> */}
+                <div className="flex flex-col gap-2 w-full md:w-1/4">
+                    <label className="text-xs text-gray-500">Students</label>
+                    <select 
+                        multiple
+                        {...register("students")} 
+                        className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full" 
+                        defaultValue={data?.students}
+                    >
+                        {students.map((student: {id: number, name: string})=>(
+                            <option key={student.id} value={student.id}>{student.name}</option>
+                        ))}
+                       
+                    </select>
+                    {errors.students?.message &&(
+                        <p className="text-red-600 text-xs">  {errors.students?.message.toString()} </p>
+                    )}
                 </div>
-                <div className="flex flex-col gap-2 w-full md:w-1/4 justify-center">
+                {/* <div className="flex flex-col gap-2 w-full md:w-1/4">
                     <label className="text-xs text-gray-500 flex items-center gap-2 cursor-pointer" htmlFor="img">
                         <Image src="/upload.png" alt="" width={28} height={28} />
-                        <span>Upload a Photo</span>
+                        <span>Upload a photo</span>
                     </label>
-                    <input id="img" type="file" {...register("img")} className="hidden"/>
-                    {errors.img?.message && 
+                    <input type="file" id="img" {...register("img")} className="hidden"/>
+                    {errors.img?.message &&(
                         <p className="text-red-600 text-xs">  {errors.img?.message.toString()} </p>
-                    }
-                </div>
+                    )}
+                </div> */}
+{/* 
+                <CldUploadWidget uploadPreset="schools" onSuccess={(result,{widget})  =>{
+                    setImg(result.info)
+                    widget.close()
+                }} >
+                    {({ open }) =>{
+                        return(
+                            <div className="text-xs text-gray-500 flex items-center gap-2 cursor-pointer"
+                                onClick={()=> open()}
+                            >
+                                <Image src="/upload.png" alt="" width={28} height={28} />
+                                <span>Upload a photo</span>
+                            </div>
+                        )
+                    }}
+                </CldUploadWidget> */}
             </div>
-            <button className="bg-blue-600 text-white rounded-md p-2">{type==="create" ? "Create" : "Update"}</button>
+            {state.error && (
+                <span className="text-red-500">Something went wrong!</span>
+            )}
+            <button className="bg-blue-400 text-white rounded-md p-2">
+                {type==="create" ? "Create" : "Update"}
+            </button>
         </form>
     )
 };

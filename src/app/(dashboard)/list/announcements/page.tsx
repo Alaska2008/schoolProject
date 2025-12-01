@@ -2,6 +2,7 @@ import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
+import { currentUser } from "@/lib/currentUser";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 // import { currentUserId, role } from "@/lib/utils";
@@ -9,9 +10,13 @@ import { auth } from "@clerk/nextjs/server";
 import { Announcement, Class, Prisma } from "@prisma/client";
 import Image from "next/image";
 
-const { userId, sessionClaims} = auth();
-const currentUserId = userId;
-const role = (sessionClaims?.metadata as {role?: string})?.role;
+// const { userId, sessionClaims} = auth();
+// const currentUserId = userId;
+// const role = (sessionClaims?.metadata as {role?: string})?.role;
+const user = await   currentUser();
+const currentUserId = user?.userId
+const role = user?.role
+console.log("current: ", user);
 
 type AnnouncementList = Announcement & {class: Class}
 
@@ -60,6 +65,7 @@ const AnnoucementListPage = async ({
 }:{
     searchParams: {[key: string]: string} | undefined;
 }) =>{
+
     const pageStr = searchParams?.page;
     const p = pageStr ? parseInt(pageStr) : 1;
 

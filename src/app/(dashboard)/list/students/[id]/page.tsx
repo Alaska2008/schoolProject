@@ -1,12 +1,10 @@
 import Announcement from "@/components/Announcement";
-import BigCalendar from "@/components/BigCalendar";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import FormContainer from "@/components/FormContainer";
-import FormModal from "@/components/FormModal";
 import Performance from "@/components/Performance";
 import StudentAttendanceCard from "@/components/StudentAttendancecard";
+import { currentUser } from "@/lib/currentUser";
 import prisma from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
 import { Class, Student } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,8 +13,8 @@ import { Suspense } from "react";
 
 const SingleStudentPage = async({params: {id}}:{params: {id: string}})=>{
     
-    const { sessionClaims} = auth();
-    const role = (sessionClaims?.metadata as {role?: string})?.role;
+    const user = await currentUser();
+    const role = user?.role;
     
     const student: (Student & {
         class: (Class & {_count: {lessons: number}})

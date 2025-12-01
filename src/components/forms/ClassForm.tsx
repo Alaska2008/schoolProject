@@ -32,25 +32,21 @@ const ClassForm = ({
         success: false,
         error: false,
     });
-    const onSubmit =handleSubmit((data,relatedData)=>{
-        console.log(data);
-        console.log("type: ", type);
+    const onSubmit =handleSubmit((data)=>{
+        console.log("data: ", data);
         formAction(data);
-        console.log("After formAction");
-        
-        console.log("relatedData: ", relatedData);
-        
     });
     const router = useRouter();
     useEffect(() =>{
+        console.log("data: ", data);
         if(state.success){
             toast(`Class has been ${type==="create" ? "create" : "update"}!`);
             setOpen(false);
             router.refresh();
         }
-    }, [state, router, type, setOpen]);
+    }, [state, router, type, setOpen, data]);
 
-    const { teachers, grades } = relatedData ?? {};
+    const { teachers } = relatedData ?? {};
 
     return (
         <form className=" flex flex-col gap-8" onSubmit={onSubmit}>
@@ -103,7 +99,7 @@ const ClassForm = ({
                         <p className="text-red-600 text-xs">  {errors.supervisorId?.message.toString()} </p>
                     }
                 </div>
-                <div className="flex flex-col gap-2 w-full md:w-1/4">
+                {/* <div className="flex flex-col gap-2 w-full md:w-1/4">
                     <label className="text-xs text-gray-500">Grade</label>
                     <select 
                         {...register("gradeId")} 
@@ -125,7 +121,8 @@ const ClassForm = ({
                     {errors.gradeId?.message && 
                         <p className="text-red-600 text-xs">  {errors.gradeId?.message.toString()} </p>
                     }
-                </div>
+                </div> */}
+                 
             </div>
             {state.error && (
                 <span className="text-red-500">Something went wrong!</span>

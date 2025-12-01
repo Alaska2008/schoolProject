@@ -1,14 +1,19 @@
 import Announcement from "@/components/Announcement"
-import AttendanceChart from "@/components/AttendanceChart"
 import AttendanceChartContainer from "@/components/AttendanceChartContainer"
-import CountChart from "@/components/CountChart"
 import CountChartContainer from "@/components/CountChartContainer"
 import EventCalendarContainer from "@/components/EventCalendarContainer"
 import FinanceChart from "@/components/FinanceChart"
 import UserCard from "@/components/UserCard"
+import { normalizeDate } from "@/lib/utils"
 
 const AdminPage =async ({searchParams}
     :{searchParams:{[keys:string]: string | undefined}}) =>{
+
+    let normalized: string | undefined = searchParams.date;
+    if(normalized) {searchParams.date = normalizeDate(normalized)};
+  
+     
+    console.log("normalizedDate: ", searchParams);
     return (
         <div className="px-4 text-xs py-2 flex gap-4 flex-col md:flex-row">
             <div className="w-full lg:w-2/3 flex flex-col gap-4">
